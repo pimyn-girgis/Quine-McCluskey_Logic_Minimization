@@ -1,73 +1,206 @@
 #include "bool_func.h"
 
-std::istream &operator>>(std::istream &is, bool_func &obj)
-{
-    obj.sum_of_products.clear();
+std::istream& operator>>(std::istream& is, bool_func& obj) {
+    obj.func.clear();
     std::string input;
     do {
         getline(is, input);
-        input = bool_func::remove_spaces(input);
-    } while(!bool_func::is_valid_func(input));
 
-    const char *sep = "+";
-    for(char *product = strtok(&input.front(), sep); product; product = strtok(nullptr, sep))
-    {
-        obj.sum_of_products.push_back(product);
-    }
+        if (input[0] == '0') {
+            is.setstate(1);
+            return is;
+        }
+
+        input = util::remove_spaces(input);
+    } while (!util::is_valid_input(input));
+
+    obj = std::move(bool_func(input));
 
     return is;
 }
 
-std::ostream &operator<<(std::ostream &os, const bool_func &obj)
-{
+std::ostream& operator<<(std::ostream& os, const bool_func& obj) {
     os << "Function: ";
 
-    const int len = obj.sum_of_products.size();
-    for(int i = 0; i < len; ++i)
-    {
-        std::cout << obj.sum_of_products[i] << (i == len - 1 ? '\n' : '+');
+    const int len = obj.func.size();
+    for (int i = 0; i < len; ++i) {
+        os << obj.func[i];
+        if (i != len - 1)
+            os << '+';
     }
 
     return os;
 }
 
-bool bool_func::is_valid_func(const std::string &func)
-{
-    const int len = func.size();
+//
+const int bool_func::get_var_count() const {
+    return var_count;
+}
 
-    for(int i = 0; i < len; ++i)
-    {
-        char c = func[i];
+void bool_func::set_var_count(const std::string& input) {
+    var_count = *std::max_element(input.begin(), input.end()) - 'a' + 1;
+    truth_table.resize(1 << var_count);
+    memset(&truth_table.front(), 0, 1 << var_count);
+}
 
-        if('a' <= c && c < 'a' + 10 || isspace(c))
-            continue;
+std::vector<std::string> bool_func::get_canonical_sop() {
+    return sop;
+}
 
-        //Otherwise, char is an operator
-        if((i == 0)                     //The first character in the function cannot be an operator
-           || (c != '\'' && c != '+')   //Check if operator is valid operator
-           || (func[i - 1] == '+')) {   //operator + cannot be followed by another operator
-            std::cout << "Invalid input at character " << i + 1 << ": " << c << '\n';
-            return false;
+std::vector<std::string> bool_func::get_canonical_pos() {
+    return pos;
+}
+
+void bool_func::set_canonical_sop() {
+
+    char product[11]; int len = 0;
+    sop.reserve(minterms.size());
+
+    for (auto u : minterms) {
+        len = 0;
+        for (int i = 0; i < get_var_count(); ++i) {
+            product[len++] = i + ((u & (1 << i))? 'a' : 'A');
+        }
+        product[len] = 0;
+        sop.emplace_back(product);
+    }
+
+}
+
+void bool_func::set_canonical_pos() {
+    char sum[22] = "("; int len = 0;
+    pos.reserve(maxterms.size());
+
+    for (auto u : maxterms) {
+        len = 1;
+
+        for (int i = 0; i < get_var_count(); ++i) {
+            sum[len++] = i + ((u & (1 << i))? 'A' : 'a');
+            sum[len++] = '+';
+        }
+
+        sum[len - 1] = ')';
+        sum[len] = 0;
+
+        pos.emplace_back(sum);
+    }
+}
+
+std::vector<int> bool_func::get_minterms() {
+    return minterms;
+}
+
+void bool_func::set_truth_table(char c, int product_index, int i, int value) {
+
+    if (product_index == func.size()) {
+        return;
+    }
+
+    if (c == 'a' + var_count) {
+        truth_table[value] = true;
+        set_truth_table('a', product_index + 1, 0, 0);
+        return;
+    }
+
+    char cur = func[product_index][i];
+    if (cur == c) {
+        value |= (1 << (c - 'a'));
+        set_truth_table(c + 1, product_index, i + 1, value);
+    } else if (cur == util::flip_case(c)) {
+        set_truth_table(c + 1, product_index, i + 1, value);
+    } else {
+        set_truth_table(c + 1, product_index, i, value);
+        set_truth_table(c + 1, product_index, i, value | (1 << (c - 'a')));
+    }
+}
+
+bool_func::bool_func(std::string& str) {
+    set_var_count(str);
+
+    std::string product;
+    product.reserve(10);
+    str += '+';
+
+    const char* temp;
+    for (temp = &str.front(); *temp; ++temp) {
+        if (*temp == '\'') {
+            product.back() = util::flip_case(product.back());
+        } else if (*temp == '+' && !product.empty()) {
+
+            std::sort(product.begin(), product.end(), util::alphabetical_sort);
+            auto it = std::unique(product.begin(), product.end());
+            product.resize(it - product.begin());
+
+            if (util::is_valid_func(product))
+                func.push_back(product);
+            else
+                std::cout << "Product " << product << " omitted; expression always evaluates to false!\n";
+
+            product.clear();
+        } else {
+            product.push_back(*temp);
         }
     }
 
-    return true;
+    std::sort(func.begin(), func.end());
+    auto it = std::unique(func.begin(), func.end());
+    func.resize(it - func.begin());
+
+    minterms.clear();
+    set_truth_table();
+    set_min_max_terms();
+    set_canonical_sop();
+    set_canonical_pos();
 }
 
-char bool_func::flip_case(const char c) {
-    return c + ('a' <= c && c <= 'z' ? 'A' - 'a' : 'a' - 'A');
+bool_func::bool_func() {
+    var_count = 0;
 }
 
-std::string bool_func::remove_spaces(const std::string &str)
-{
-    std::string temp; temp.reserve(str.size());
+const bool bool_func::is_minterm(int i) {
+    return truth_table[i];
+}
 
-    const int len = str.size();
-    for(int i = 0; i < len; ++i) {
+void bool_func::set_min_max_terms() {
+    for (int i = 0; i < 1 << get_var_count(); ++i) {
+        if (is_minterm(i)) {
+            minterms.push_back(i);
+        } else {
+            maxterms.push_back(i);
+        }
+    }
+}
+std::vector<char> bool_func::get_truth_table() {
+    return truth_table;
+}
+std::vector<int> bool_func::get_maxterms() {
+    return maxterms;
+}
+void bool_func::print_truth_table() {
 
-        if (!isspace(str[i]))
-            temp.push_back(str[i]);
+#define print_line \
+    for (int i = 0; i < var_count; ++i) { \
+        std::cout << "+---"; \
+    } std::cout << "+-----+\n";
+
+    print_line;
+    for (int i = var_count - 1; i >= 0; --i) {
+        std::cout << "| " << char('a' + i) << " ";
+    } std::cout << "| exp |\n";
+    print_line;
+
+    std::stack<char> vars;
+    for (int i = 0; i < 1 << var_count; ++i) {
+
+        for (int j = 0; j < var_count; ++j) {
+            vars.push(i & (1 << j)? '1' : '0');
+        }
+        for (int j = 0; j < var_count; ++j) {
+            std::cout << "| " << vars.top() << " ";
+            vars.pop();
+        } std::cout << "|  " << is_minterm(i) << "  |\n";
+
+        print_line;
     }
 
-    return temp;
 }
