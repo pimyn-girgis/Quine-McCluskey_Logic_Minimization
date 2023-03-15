@@ -5,7 +5,7 @@
 
 class bool_func {
    private:
-    bool_func(std::string& str); //constructor from string
+    explicit bool_func(std::string& str); //constructor from string
     int var_count;
 
     std::vector<std::string> sop; //Vector Of products representing the Canonical SoP
@@ -29,11 +29,11 @@ class bool_func {
     friend std::istream& operator>>(std::istream& is, bool_func& obj);
     friend std::ostream& operator<<(std::ostream& os, const bool_func& obj);
 
-    std::vector<std::string> get_canonical_sop();
-    std::vector<std::string> get_canonical_pos();
-    std::vector<int> get_minterms();
-    std::vector<int> get_maxterms();
-    std::vector<char> get_truth_table();
+    const std::vector<std::string>& get_canonical_sop();
+    const std::vector<std::string>& get_canonical_pos();
+    const std::vector<int>& get_minterms();
+    const std::vector<int>& get_maxterms();
+    const std::vector<char>& get_truth_table();
 
     bool is_minterm(int i);
     int get_var_count() const;
