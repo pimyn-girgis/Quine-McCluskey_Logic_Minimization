@@ -14,7 +14,7 @@ int main() {
                  "Enter 0 to quit the program\n";
 
     std::cout << "test commit";
-    std::cout << "test ziad1";
+    std::cout << "test ziad12";
 
     bool_func func;
     while (std::cin >> func) {
