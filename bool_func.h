@@ -5,7 +5,7 @@
 
 class bool_func {
    private:
-    bool_func(const std::string& str); //constructor from string
+    bool_func(std::string& str); //constructor from string
     int var_count;
 
     std::vector<std::string> sop; //Vector Of products representing the Canonical SoP
@@ -14,9 +14,8 @@ class bool_func {
     std::vector<int> minterms;
     std::vector<int> maxterms;
     std::vector<char> truth_table; //Vector<char> was used because it is faster than using a vector<bool>
-    std::string func_as_str;
 
-    void parse_func(const std::string &str);
+    void parse_func(std::string &str);
     void set_var_count(const std::string& input); //Given a function as input, calculate the number of variables
     void init_truth_table();
     void set_truth_table(char c = 'a', int product_index = 0, int i = 0, int value = 0); //Calculate the truth table

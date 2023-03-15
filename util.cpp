@@ -9,7 +9,7 @@ bool util::is_valid_input(const std::string& func) {
     for (int i = 0; i < len; ++i) {
         char c = func[i];
 
-        if ('a' <= c && c < 'a' + 10 || isspace(c))
+        if ('a' <= c && c < 'a' + 10)
             continue;
 
         //Otherwise, char is an operator
@@ -23,7 +23,6 @@ bool util::is_valid_input(const std::string& func) {
 
     return true;
 }
-
 std::string util::remove_spaces(const std::string& str) {
     const int len = int(str.size());
     std::string temp;
