@@ -15,14 +15,14 @@ Input is implemented using C++ IO streams according to the following rules:
 - A user can manually set the var count by adding a false term; e.g. the function ab + ee' will evaluate to a function with 5 variables, while ab will evaluate to a function with only two variables
 
 ## Data Storage and Representation:
-- The main data structure used for storing a function is a dynamic array (std::vector) of dynamic character arrays (std::string)
+- The main data structure used for storing a function is an std::vector\<std::string\>
 - Internally, variables will be lowercase letters, while their negation will be uppercase letters.
-- minterms and maxterms are kept inside their respective std::vector<int>.
-- The truth table is represented using an std::vector<char>. An std::vector<bool> was considered but the performance issues resulting from it cannot be ignored.
+- minterms and maxterms are kept inside their respective std::vector\<int\>.
+- The truth table is represented using an std::vector\<char\>. An std::vector\<bool\> was considered but the performance issues resulting from it cannot be ignored.
 
 ## Initialization
 - After the input is inserted and validated, the variable count and the size of the truth table are determined.
-- After that, the function is parsed and each term is extracted individually and added to an std::vector<std::string>
+- After that, the function is parsed and each term is extracted individually and added to an std::vector\<std::string\>
 - Characters of the each term are sorted alphabetically, while the terms of the SoP are sorted lexicographically.
 - It is ensured that no characters are repeated inside a string, and no terms are repeated in the function.
 - ### Setting the truth table
