@@ -41,19 +41,19 @@ std::ostream& operator<<(std::ostream& os, const bool_func& obj) {
     return os;
 }
 
-std::vector<std::string> bool_func::get_canonical_sop() {
+const std::vector<std::string>& bool_func::get_canonical_sop() {
     return sop;
 }
-std::vector<std::string> bool_func::get_canonical_pos() {
+const std::vector<std::string>& bool_func::get_canonical_pos() {
     return pos;
 }
-std::vector<char> bool_func::get_truth_table() {
+const std::vector<char>& bool_func::get_truth_table() {
     return truth_table;
 }
-std::vector<int> bool_func::get_minterms() {
+const std::vector<int>& bool_func::get_minterms() {
     return minterms;
 }
-std::vector<int> bool_func::get_maxterms() {
+const std::vector<int>& bool_func::get_maxterms() {
     return maxterms;
 }
 int bool_func::get_var_count() const {
