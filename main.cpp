@@ -13,9 +13,6 @@ int main() {
                  "code or more than 10.\n"
                  "Enter 0 to quit the program\n";
 
-    std::cout << "test commit";
-    std::cout << "test ziad12";
-
     bool_func func;
     while (std::cin >> func) {
         std::cout << func << '\n';
