@@ -3,7 +3,7 @@
 
 int main() {
     std::ios_base::sync_with_stdio(false);
-
+    std::cout<<"test commit 1";
     std::cout << "Enter the function as an SoP, only accepted values are [a-j], + (OR) , \' (Negation)\n"
                  "Number of variables is calculated automatically.\n"
                  "It is assumed that the variables sequentially take lowercase letters \'a\' through \'j\'\n"
