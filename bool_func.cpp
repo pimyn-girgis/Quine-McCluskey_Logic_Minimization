@@ -164,7 +164,6 @@ void bool_func::set_min_max_terms() {
 }
 void bool_func::init_truth_table() {
     truth_table.resize(1 << var_count);
-    memset(&truth_table.front(), 0, 1 << var_count);
 }
 void bool_func::parse_func(std::string& str) {
     std::string product;
