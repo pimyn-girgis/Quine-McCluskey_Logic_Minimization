@@ -1,12 +1,31 @@
 #ifndef QM_ALGORITHM_BOOL_FUNC_H
 #define QM_ALGORITHM_BOOL_FUNC_H
 
+#include <unordered_set>
 #include "util.h"
+
+struct implicant {
+    implicant(int i, int d, bool b);
+    int imp;
+    int dash_location;
+    bool is_combined;
+    std::vector<int> covered_minterms;
+};
+
+namespace std {
+template <>
+struct hash<implicant> {
+    size_t operator()(const implicant& x) const {
+        return hash<int>()(x.imp) ^ hash<int>()(x.dash_location);
+    }
+};
+}
 
 class bool_func {
    private:
     explicit bool_func(std::string& str); //constructor from string
     int var_count;
+    bool is_combined;
 
     std::vector<std::string> sop; //Vector Of products representing the Canonical SoP
     std::vector<std::string> pos; //Vector of sums representing the Canonical PoS
@@ -14,6 +33,10 @@ class bool_func {
     std::vector<int> minterms;
     std::vector<int> maxterms;
     std::vector<char> truth_table; //Vector<char> was used because it is faster than using a vector<bool>
+    std::vector<std::vector<implicant>> pi_table;
+    std::vector<std::vector<implicant>> tmp_table;
+    std::vector<implicant> test;
+
 
     void parse_func(std::string &str);
     void set_var_count(const std::string& input); //Given a function as input, calculate the number of variables
@@ -34,11 +57,14 @@ class bool_func {
     const std::vector<int>& get_minterms();
     const std::vector<int>& get_maxterms();
     const std::vector<char>& get_truth_table();
-
+    std::vector<implicant> get_prime_implicants(std::vector<int>& SOP);
     bool is_minterm(int i);
+    static bool is_combinable(implicant * x, implicant * y);
+
     int get_var_count() const;
 
     void print_truth_table();
+
 };
 
 #endif  // QM_ALGORITHM_BOOL_FUNC_H

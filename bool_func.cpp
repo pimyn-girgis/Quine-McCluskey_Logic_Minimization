@@ -17,7 +17,8 @@ std::istream& operator>>(std::istream& is, bool_func& obj) {
         getline(is, input);
 
         if (input[0] == '0') {  //If first character is 0, istream is false.
-            is.setstate(1);
+            //is.setstate(1);
+            exit(0);
             return is;
         }
 
@@ -190,4 +191,44 @@ void bool_func::parse_func(std::string& str) {
     }
 
     util::ensure_vec_unique(func);
+}
+bool bool_func::is_combinable(implicant* x, implicant* y) {
+    return x->dash_location == y->dash_location && util::is_power_of_two(x->imp^y->imp) == 1;
+}
+std::vector<implicant> bool_func::get_prime_implicants(std::vector<int>& SOP) {
+    pi_table.resize(var_count + 1);
+    tmp_table.resize(var_count + 1);
+
+    for (int i: SOP) {
+        pi_table[__builtin_popcount(i)].emplace_back(i, 0, false);
+        pi_table[__builtin_popcount(i)].back().covered_minterms.push_back(i);
+    }
+
+    do {
+        is_combined = false;
+        for (int i(0),c(0); i < pi_table.size() ; ++i)
+            for (implicant& j : pi_table[i]) {
+                if (i < var_count) {
+                    for (implicant& k : pi_table[i + 1])
+                        if (is_combinable(&j, &k)) {
+                            tmp_table[i].emplace_back((j.imp ^ k.imp) | j.imp, (j.imp ^ k.imp) | j.dash_location,false);
+                            for (auto m : j.covered_minterms)
+                                tmp_table[i].back().covered_minterms.push_back(m);
+                            for (auto m : k.covered_minterms)
+                                tmp_table[i].back().covered_minterms.push_back(m);
+                            j.is_combined = true; k.is_combined = true; is_combined = true;
+                        }
+                }
+                if (!j.is_combined)
+                    test.push_back(j);
+            }
+            pi_table = std::move(tmp_table);
+            tmp_table.resize(var_count);
+    } while(is_combined);
+    return test;
+}
+implicant::implicant(int i, int d, bool b) {
+    imp=i;
+    dash_location=d;
+    is_combined=b;
 }
