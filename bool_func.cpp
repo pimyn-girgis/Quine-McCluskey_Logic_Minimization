@@ -241,5 +241,6 @@ std::vector<implicant>& bool_func::get_prime_implicants(std::vector<int>& SOP) {
     auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
     std::cout << "Time taken by function: "
          << duration.count() << " microseconds" << "\n";
+
     return prime_implicants;
 }

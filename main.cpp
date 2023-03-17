@@ -48,6 +48,7 @@ int main() {
         func.print_truth_table();
 
         /*
+
         std::vector<implicant> test = func.get_prime_implicants(minterms);
 
         for(auto t : test) {

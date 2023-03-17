@@ -14,7 +14,6 @@ struct implicant {
         return (imp == other.imp) && (dash_location == other.dash_location);
     }
 };
-
 struct pair_hash
 {
     template <class T1, class T2>
