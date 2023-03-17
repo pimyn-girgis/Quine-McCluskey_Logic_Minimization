@@ -1,8 +1,8 @@
 #ifndef QM_ALGORITHM_BOOL_FUNC_H
 #define QM_ALGORITHM_BOOL_FUNC_H
 
-#include <unordered_set>
 #include "util.h"
+#include <chrono>
 
 struct implicant {
     implicant(int i, int d, bool b);
@@ -10,16 +10,18 @@ struct implicant {
     int dash_location;
     bool is_combined;
     std::vector<int> covered_minterms;
-};
-
-namespace std {
-template <>
-struct hash<implicant> {
-    size_t operator()(const implicant& x) const {
-        return hash<int>()(x.imp) ^ hash<int>()(x.dash_location);
+    bool operator==(const implicant& other) const {
+        return (imp == other.imp) && (dash_location == other.dash_location);
     }
 };
-}
+
+struct pair_hash
+{
+    template <class T1, class T2>
+    std::size_t operator() (const std::pair<T1, T2> &pair) const {
+        return (static_cast<std::uint32_t>(pair.first) << 11) + pair.second;
+    }
+};
 
 class bool_func {
    private:
@@ -35,7 +37,8 @@ class bool_func {
     std::vector<char> truth_table; //Vector<char> was used because it is faster than using a vector<bool>
     std::vector<std::vector<implicant>> pi_table;
     std::vector<std::vector<implicant>> tmp_table;
-    std::vector<implicant> test;
+    std::vector<implicant> prime_implicants;
+    std::unordered_map<std::pair<int,int>,int,pair_hash> exists;
 
 
     void parse_func(std::string &str);
@@ -57,14 +60,13 @@ class bool_func {
     const std::vector<int>& get_minterms();
     const std::vector<int>& get_maxterms();
     const std::vector<char>& get_truth_table();
-    std::vector<implicant> get_prime_implicants(std::vector<int>& SOP);
+    std::vector<implicant>& get_prime_implicants(std::vector<int>& SOP);
     bool is_minterm(int i);
     static bool is_combinable(implicant * x, implicant * y);
 
     int get_var_count() const;
 
     void print_truth_table();
-
 };
 
 #endif  // QM_ALGORITHM_BOOL_FUNC_H
