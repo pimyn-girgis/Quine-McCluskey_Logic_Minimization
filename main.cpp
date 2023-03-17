@@ -46,6 +46,17 @@ int main() {
         std::cout << '\n';
 
         func.print_truth_table();
+
+        std::vector<implicant> test = func.get_prime_implicants(minterms);
+
+        for(auto t : test) {
+            std::cout <<"Implicant : "<< t.imp << ", Dash Location : " << t.dash_location << "\nMinterms Covered : \n";
+
+            for(auto i : t.covered_minterms)
+                std::cout<<i<<" ";
+            std::cout<<"\n-----------\n";
+
+        }
     }
     return 0;
 }

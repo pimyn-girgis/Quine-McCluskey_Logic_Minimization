@@ -10,6 +10,11 @@ bool_func::bool_func(std::string& str) : var_count(0) {
     set_canonical_sop();
     set_canonical_pos();
 }
+implicant::implicant(int i, int d, bool b) {
+    imp=i;
+    dash_location=d;
+    is_combined=b;
+}
 
 std::istream& operator>>(std::istream& is, bool_func& obj) {
     std::string input;
@@ -17,7 +22,8 @@ std::istream& operator>>(std::istream& is, bool_func& obj) {
         getline(is, input);
 
         if (input[0] == '0') {  //If first character is 0, istream is false.
-            is.setstate(1);
+            //is.setstate(1);
+            exit(0);
             return is;
         }
 
@@ -164,7 +170,6 @@ void bool_func::set_min_max_terms() {
 }
 void bool_func::init_truth_table() {
     truth_table.resize(1 << var_count);
-    memset(&truth_table.front(), 0, 1 << var_count);
 }
 void bool_func::parse_func(std::string& str) {
     std::string product;
@@ -191,4 +196,68 @@ void bool_func::parse_func(std::string& str) {
     }
 
     util::ensure_vec_unique(func);
+}
+bool bool_func::is_combinable(implicant* x, implicant* y) {
+    return x->dash_location == y->dash_location && util::is_power_of_two(x->imp^y->imp) == 1;
+}
+
+bool bool_func::test(implicant * j, implicant * k, int i) {
+    std::vector<int> v;
+    for (auto m : j->covered_minterms)
+        v.push_back(m);
+    for (auto m : k->covered_minterms)
+        v.push_back(m);
+    for(const auto& u : tmp_table[i])
+        if (u.covered_minterms==v){
+            return false;
+        }
+    return true;
+}
+
+const std::vector<implicant>& bool_func::get_prime_implicants(std::vector<int>& SOP) {
+    auto start = std::chrono::high_resolution_clock::now();
+    pi_table.resize(var_count + 1);
+    tmp_table.resize(var_count + 1);
+
+    for (int i: SOP) {
+        pi_table[__builtin_popcount(i)].emplace_back(i, 0, false);
+        pi_table[__builtin_popcount(i)].back().covered_minterms.push_back(i);
+    }
+    exists.reserve(10000);
+    do {
+        is_combined = false;
+        for (int i(0); i < pi_table.size() ; ++i)
+            for (implicant& j : pi_table[i]) {
+                if (i < var_count && !pi_table[i+1].empty() ) {
+                    for (implicant& k : pi_table[i + 1]){
+                        if (is_combinable(&j, &k)) {
+                            if(exists[{(j.imp ^ k.imp) | j.imp, (j.imp ^ k.imp) | j.dash_location}]) {
+                                j.is_combined = true; k.is_combined = true; is_combined = true;
+                            }
+                            else {
+                                tmp_table[i].emplace_back((j.imp ^ k.imp) | j.imp, (j.imp ^ k.imp) | j.dash_location,
+                                                          false);
+                                exists[{(j.imp ^ k.imp) | j.imp, (j.imp ^ k.imp) | j.dash_location}] = true;
+                                for (auto m : j.covered_minterms)
+                                    tmp_table[i].back().covered_minterms.push_back(m);
+                                for (auto m : k.covered_minterms)
+                                    tmp_table[i].back().covered_minterms.push_back(m);
+                                j.is_combined = true; k.is_combined = true; is_combined = true;
+                            }
+                        }
+                    }
+                }
+                if (!j.is_combined)
+                    prime_implicants.push_back(j);
+            }
+        pi_table = std::move(tmp_table);
+            tmp_table.resize(var_count);
+    } while(is_combined);
+
+    auto stop = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+    std::cout << "Time taken by function: "
+         << duration.count() << " microseconds" << "\n";
+
+    return prime_implicants;
 }
