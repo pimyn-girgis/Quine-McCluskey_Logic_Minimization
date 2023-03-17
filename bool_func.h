@@ -14,11 +14,12 @@ struct implicant {
         return (imp == other.imp) && (dash_location == other.dash_location);
     }
 };
+
 struct pair_hash
 {
     template <class T1, class T2>
     std::size_t operator() (const std::pair<T1, T2> &pair) const {
-        return (static_cast<std::uint32_t>(pair.first) << 11) + pair.second;
+       return (static_cast<std::uint32_t>(pair.first) << 11) + pair.second << 4 ;
     }
 };
 
@@ -66,6 +67,8 @@ class bool_func {
     int get_var_count() const;
 
     void print_truth_table();
+
+    bool test (implicant * j , implicant * k,int i);
 };
 
 #endif  // QM_ALGORITHM_BOOL_FUNC_H

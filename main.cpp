@@ -47,8 +47,6 @@ int main() {
 
         func.print_truth_table();
 
-        /*
-
         std::vector<implicant> test = func.get_prime_implicants(minterms);
 
         for(auto t : test) {
@@ -59,8 +57,6 @@ int main() {
             std::cout<<"\n-----------\n";
 
         }
-        TESTING OUTPUT
-         */
     }
     return 0;
 }

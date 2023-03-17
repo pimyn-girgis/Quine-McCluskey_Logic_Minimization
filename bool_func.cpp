@@ -200,6 +200,20 @@ void bool_func::parse_func(std::string& str) {
 bool bool_func::is_combinable(implicant* x, implicant* y) {
     return x->dash_location == y->dash_location && util::is_power_of_two(x->imp^y->imp) == 1;
 }
+
+bool bool_func::test(implicant * j, implicant * k, int i) {
+    std::vector<int> v;
+    for (auto m : j->covered_minterms)
+        v.push_back(m);
+    for (auto m : k->covered_minterms)
+        v.push_back(m);
+    for(const auto& u : tmp_table[i])
+        if (u.covered_minterms==v){
+            return false;
+        }
+    return true;
+}
+
 std::vector<implicant>& bool_func::get_prime_implicants(std::vector<int>& SOP) {
     auto start = std::chrono::high_resolution_clock::now();
     pi_table.resize(var_count + 1);
@@ -209,31 +223,35 @@ std::vector<implicant>& bool_func::get_prime_implicants(std::vector<int>& SOP) {
         pi_table[__builtin_popcount(i)].emplace_back(i, 0, false);
         pi_table[__builtin_popcount(i)].back().covered_minterms.push_back(i);
     }
-
+    //exists.reserve(2000);
     do {
         is_combined = false;
-        for (int i(0); i < pi_table.size() ; ++i)
+        for (int i(0),c(0); i < pi_table.size() ; ++i)
             for (implicant& j : pi_table[i]) {
-                if (i < var_count) {
+                if (i < var_count && !pi_table[i+1].empty() ) {
                     for (implicant& k : pi_table[i + 1]){
-                        if(exists[{(j.imp ^ k.imp) | j.imp, (j.imp ^ k.imp) | j.dash_location}]) {
-                            j.is_combined = true; k.is_combined = true; is_combined = true;
-                        }
-                        else if (is_combinable(&j, &k)) {
-                            tmp_table[i].emplace_back((j.imp ^ k.imp) | j.imp, (j.imp ^ k.imp) | j.dash_location,false);
-                            exists[{(j.imp ^ k.imp) | j.imp, (j.imp ^ k.imp) | j.dash_location}] = true;
-                            for (auto m : j.covered_minterms)
-                                tmp_table[i].back().covered_minterms.push_back(m);
-                            for (auto m : k.covered_minterms)
-                                tmp_table[i].back().covered_minterms.push_back(m);
-                            j.is_combined = true; k.is_combined = true; is_combined = true;
+                        if (is_combinable(&j, &k)) {
+                            if(exists[{(j.imp ^ k.imp) | j.imp, (j.imp ^ k.imp) | j.dash_location}]) {
+                                j.is_combined = true; k.is_combined = true; is_combined = true;
+                            }
+                            else {
+                                tmp_table[i].emplace_back((j.imp ^ k.imp) | j.imp, (j.imp ^ k.imp) | j.dash_location,
+                                                          false);
+                                exists[{(j.imp ^ k.imp) | j.imp, (j.imp ^ k.imp) | j.dash_location}] = true;
+                                for (auto m : j.covered_minterms)
+                                    tmp_table[i].back().covered_minterms.push_back(m);
+                                for (auto m : k.covered_minterms)
+                                    tmp_table[i].back().covered_minterms.push_back(m);
+                                j.is_combined = true; k.is_combined = true; is_combined = true;
+                            }
                         }
                     }
                 }
                 if (!j.is_combined)
                     prime_implicants.push_back(j);
             }
-            pi_table = std::move(tmp_table);
+        //exists.clear(); exists.reserve(2000);
+        pi_table = std::move(tmp_table);
             tmp_table.resize(var_count);
     } while(is_combined);
 
