@@ -16,6 +16,7 @@ class util {
     static bool is_valid_input(const std::string& func);
     static std::string remove_spaces(const std::string& str);
     static bool is_valid_func(const std::string &str);
+    static bool is_power_of_two(int val);
     static bool alphabetical_sort(char a, char c);
     static void ensure_str_unique(std::string &str);
     static void ensure_vec_unique(std::vector<std::string>& vec);

@@ -63,3 +63,6 @@ void util::ensure_vec_unique(std::vector<std::string>& vec) {
     auto it = std::unique(vec.begin(), vec.end());
     vec.resize(it - vec.begin());
 }
+bool util::is_power_of_two(const int val) {
+    return !((val - 1) & val);
+}

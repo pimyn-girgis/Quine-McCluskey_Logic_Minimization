@@ -214,12 +214,12 @@ bool bool_func::test(implicant * j, implicant * k, int i) {
     return true;
 }
 
-const std::vector<implicant>& bool_func::get_prime_implicants(std::vector<int>& SOP) {
+const std::vector<implicant>& bool_func::get_prime_implicants() {
     auto start = std::chrono::high_resolution_clock::now();
     pi_table.resize(var_count + 1);
     tmp_table.resize(var_count + 1);
 
-    for (int i: SOP) {
+    for (int i: minterms) {
         pi_table[__builtin_popcount(i)].emplace_back(i, 0, false);
         pi_table[__builtin_popcount(i)].back().covered_minterms.push_back(i);
     }
@@ -250,6 +250,7 @@ const std::vector<implicant>& bool_func::get_prime_implicants(std::vector<int>& 
                 if (!j.is_combined)
                     prime_implicants.push_back(j);
             }
+        exists.clear();
         pi_table = std::move(tmp_table);
             tmp_table.resize(var_count);
     } while(is_combined);

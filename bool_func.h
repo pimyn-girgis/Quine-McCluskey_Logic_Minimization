@@ -60,7 +60,7 @@ class bool_func {
     const std::vector<int>& get_minterms();
     const std::vector<int>& get_maxterms();
     const std::vector<char>& get_truth_table();
-    const std::vector<implicant>& get_prime_implicants(std::vector<int>& SOP);
+    const std::vector<implicant>& get_prime_implicants();
     bool is_minterm(int i);
     static bool is_combinable(implicant * x, implicant * y);
 
