@@ -2,11 +2,32 @@
 #define QM_ALGORITHM_BOOL_FUNC_H
 
 #include "util.h"
+#include <chrono>
+
+struct implicant {
+    implicant(int i, int d, bool b);
+    int imp;
+    int dash_location;
+    bool is_combined;
+    std::vector<int> covered_minterms;
+    bool operator==(const implicant& other) const {
+        return (imp == other.imp) && (dash_location == other.dash_location);
+    }
+};
+
+struct pair_hash
+{
+    template <class T1, class T2>
+    std::size_t operator() (const std::pair<T1, T2> &pair) const {
+       return (static_cast<std::uint32_t>(pair.first) << 11) + pair.second << 4 ;
+    }
+};
 
 class bool_func {
    private:
     explicit bool_func(std::string& str); //constructor from string
     int var_count;
+    bool is_combined;
 
     std::vector<std::string> sop; //Vector Of products representing the Canonical SoP
     std::vector<std::string> pos; //Vector of sums representing the Canonical PoS
@@ -14,6 +35,11 @@ class bool_func {
     std::vector<int> minterms;
     std::vector<int> maxterms;
     std::vector<char> truth_table; //Vector<char> was used because it is faster than using a vector<bool>
+    std::vector<std::vector<implicant>> pi_table;
+    std::vector<std::vector<implicant>> tmp_table;
+    std::vector<implicant> prime_implicants;
+    std::unordered_map<std::pair<int,int>,int,pair_hash> exists;
+
 
     void parse_func(std::string &str);
     void set_var_count(const std::string& input); //Given a function as input, calculate the number of variables
@@ -34,11 +60,15 @@ class bool_func {
     const std::vector<int>& get_minterms();
     const std::vector<int>& get_maxterms();
     const std::vector<char>& get_truth_table();
-
+    std::vector<implicant>& get_prime_implicants(std::vector<int>& SOP);
     bool is_minterm(int i);
+    static bool is_combinable(implicant * x, implicant * y);
+
     int get_var_count() const;
 
     void print_truth_table();
+
+    bool test (implicant * j , implicant * k,int i);
 };
 
 #endif  // QM_ALGORITHM_BOOL_FUNC_H

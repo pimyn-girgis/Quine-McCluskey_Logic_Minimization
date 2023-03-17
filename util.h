@@ -12,6 +12,7 @@
 
 class util {
    public:
+
     static char flip_case(char c);
     static bool is_valid_input(const std::string& func);
     static std::string remove_spaces(const std::string& str);
@@ -20,6 +21,7 @@ class util {
     static bool alphabetical_sort(char a, char c);
     static void ensure_str_unique(std::string &str);
     static void ensure_vec_unique(std::vector<std::string>& vec);
+
 };
 
 #endif  //QM_ALGORITHM_UTIL_H
