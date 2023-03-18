@@ -18,7 +18,7 @@ Now to run an instance of the program just type in
 ```
 Large input may be difficult to display on the terminal, thus, we advise you save the output to a file using the following command.
 ```
-./QM/QM_Algorithm < in.txt > out.txt
+./QM/QM_Algorithm < QM/in.txt > QM/out.txt
 ```
 where in.txt is the input, and out.txt is the output.
 
