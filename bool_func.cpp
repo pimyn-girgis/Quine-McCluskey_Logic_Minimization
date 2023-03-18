@@ -252,13 +252,23 @@ const std::vector<implicant>& bool_func::get_prime_implicants() {
             }
         exists.clear();
         pi_table = std::move(tmp_table);
-            tmp_table.resize(var_count);
+        tmp_table.resize(var_count);
     } while(is_combined);
 
     auto stop = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-    std::cout << "Time taken by function: "
-         << duration.count() << " microseconds" << "\n";
-
+    std::cout << "Time taken by function: " << duration.count() << " microseconds" << "\n";
+    get_optimized_func();
     return prime_implicants;
+}
+const std::vector<implicant>& bool_func::get_optimized_func() {
+    for (int i(0);i<prime_implicants.size();++i) {
+        for(int c : prime_implicants[i].covered_minterms)
+            coverage_chart[c].emplace(i);
+    }
+    for (const auto& u : coverage_chart)
+        for(const auto& m : u.second) {
+            u.second.size() == 1 ? essential_prime_implicants.emplace_back(prime_implicants[m])
+                                 : non_essential_prime_implicants.emplace_back(prime_implicants[m]);
+        }
 }
