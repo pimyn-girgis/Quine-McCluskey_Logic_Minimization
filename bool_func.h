@@ -47,7 +47,8 @@ class bool_func {
     void parse_func(std::string &str);
     void set_var_count(const std::string& input); //Given a function as input, calculate the number of variables
     void init_truth_table();
-    void set_truth_table(char c = 'a', int product_index = 0, int i = 0, int value = 0); //Calculate the truth table
+    void set_truth_table();
+    void set_truth_table(char c, int product_index, int i, int value); //Calculate the truth table
     void set_min_max_terms();
     void set_canonical_sop();
     void set_canonical_pos();
