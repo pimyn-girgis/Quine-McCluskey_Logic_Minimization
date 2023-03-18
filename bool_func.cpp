@@ -138,15 +138,16 @@ void bool_func::set_canonical_pos() {
 void bool_func::set_var_count(const std::string& input) {
     var_count = *std::max_element(input.begin(), input.end()) - 'a' + 1;
 }
-void bool_func::set_truth_table(char c, int product_index, int i, int value) {
 
-    if (product_index == func.size()) {
-        return;
+void bool_func::set_truth_table() {
+    for (int i = 0; i < func.size(); ++i) {
+        set_truth_table('a', i, 0, 0);
     }
+}
+void bool_func::set_truth_table(char c, int product_index, int i, int value) {
 
     if (c == 'a' + var_count) {
         truth_table[value] = true;
-        set_truth_table('a', product_index + 1, 0, 0);
         return;
     }
 
