@@ -9,7 +9,10 @@
 #include <set>
 #include <stack>
 #include <vector>
+#include <cstdio>
+#include <cctype>
 #include <unordered_map>
+
 
 class util {
    public:
