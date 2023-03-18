@@ -340,7 +340,7 @@ void bool_func::set_prime_implicants() {
     std::cout << "Time taken by function: " << duration.count() << " microseconds" << "\n";
 }
 std::string bool_func::binary_to_string(int imp, int dash,bool b) const {
-    char c = 'a' + var_count - 1;
+    char c = 'a' ; // add (+ var_count - 1) if u wanna invert the ouput again.
     std::string output;
     for(int i(0);i<var_count;++i,--c) {
         if((dash&1))
