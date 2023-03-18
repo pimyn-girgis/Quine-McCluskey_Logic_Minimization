@@ -24,8 +24,8 @@ Input is implemented using C++ IO streams according to the following rules:
 - No operator can be at the start of the function
 - Negation can be repeated multiple times
 - The OR operator cannot be followed by another operator.
-- An or operator at the end of the function will be 
-- any spaces in the function is removed i.e. "a b     c" is converted to "abc"
+- An or operator at the end of the function will be dismissed.
+- any spaces in the function is removed i.e. "a b\tc" is converted to "abc"
 - Only allowed variable names are 'a' through 'j' (maximum 10 variables)
 - User is prompted the position and value of the character where an error is discovered.
 - To make the design easier, if a term in the input is always evaluated to false, it is omitted from the expression; e.g. aa' + ab will be translated to ab.
@@ -42,10 +42,14 @@ Input is implemented using C++ IO streams according to the following rules:
 - After that, the function is parsed and each term is extracted individually and added to an std::vector\<std::string\>
 - Characters of the each term are sorted alphabetically, while the terms of the SoP are sorted lexicographically.
 - It is ensured that no characters are repeated inside a string, and no terms are repeated in the function.
-- ### Setting the truth table
+
+## Setting the truth table
   - The truth table is then set by going through the products one by one.
   - For each product we go through the variables one by one (e.g. for the term $bc$ in a 4 variable expression, we go through $a, b, c,$ and $d$).
   - Since the terms are sorted, checking if a variable exists or not is trivial!
   - If a variable's truth value is specified, we determine it and move on to the next one. Otherwise, we branch our program to consider both cases when it's true and when it's false.
+  
+## Calculating min/max terms and SoP/PoS
 - Calculating the min/max terms is trivial given the truth table.
-- The canonical SoP is calculated using the minterms, and the canonical PoS is calculated using the maxterms.
+- We simply go through the table element by element, if it is set to true, we add it to the vector of minterms otherwise, we add it to the vector of maxterms.
+- Given the min/max terms, we simply translate the terms into characters and store them in the SoP/PoS.
