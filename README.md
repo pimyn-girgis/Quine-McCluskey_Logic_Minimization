@@ -81,12 +81,12 @@ Input is implemented using C++ IO streams according to the following rules:
 - The loop repeats until no more implicants can be combined.
 ## Getting essential and non essential prime implicants (set_essentials_and_non_essentials())
 -The code has four main steps:
--1 Iterate through each prime implicant in prime_implicants and add its covered minterms to coverage_chart and uncovered_minterms.
--2 Iterate through each entry in coverage_chart and check if there is only one prime implicant that covers the minterm. If so, add the corresponding prime implicant to essential_prime_implicants set.
--3 Iterate through each essential prime implicant in essential_prime_implicants set and remove its covered minterms from uncovered_minterms set.
--4 Iterate through each prime implicant in prime_implicants and check if it is not present in essential_prime_implicants set. If so, add it to non_essential_prime_implicants set.
--The purpose of the code is to identify essential and non-essential prime implicants in a logical expression. Essential prime implicants are those that are necessary to cover all minterms in the expression, while non-essential prime implicants can be removed without affecting the expression's truth table.
--The function uses sets to store prime implicants, essential prime implicants, and non-essential prime implicants. It also uses an unordered map to store coverage information for each minterm.
+- (1) Iterate through each prime implicant in prime_implicants and add its covered minterms to coverage_chart and uncovered_minterms.
+- (2) Iterate through each entry in coverage_chart and check if there is only one prime implicant that covers the minterm. If so, add the corresponding prime implicant to essential_prime_implicants set.
+- (3) Iterate through each essential prime implicant in essential_prime_implicants set and remove its covered minterms from uncovered_minterms set.
+- (4) Iterate through each prime implicant in prime_implicants and check if it is not present in essential_prime_implicants set. If so, add it to non_essential_prime_implicants set.
+- The purpose of the code is to identify essential and non-essential prime implicants in a logical expression. Essential prime implicants are those that are necessary to cover all minterms in the expression, while non-essential prime implicants can be removed without affecting the expression's truth table.
+- The function uses sets to store prime implicants, essential prime implicants, and non-essential prime implicants. It also uses an unordered map to store coverage information for each minterm.
 ## Printing the minimized boolean expression
 - At this point, we have all the prime implicants PIs, essential prime implicants EPIs, and the covered/uncovered minterms.
 - By definition, the minimized function should include all the EPIs and, if there are uncovered minterms, the prime implicants covering the remaining uncovered minterms.
