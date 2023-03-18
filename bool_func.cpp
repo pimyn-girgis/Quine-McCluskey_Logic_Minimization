@@ -238,8 +238,10 @@ const std::unordered_set<implicant,implicant_hash>& bool_func::get_optimized_fun
     std::cout<<"Final Optimized Function : \n";
     for(auto it = ans.begin(); it != ans.end(); ++it,--len)
         std::cout<<binary_to_string((*it).imp,(*it).dash_location,false) << (len? '+' : '\n' );
-    if(binary_to_string((ans.begin())->imp,(ans.begin()->dash_location),false)=="")
+    if(!ans.empty()&&binary_to_string((ans.begin())->imp,(ans.begin()->dash_location),false)=="")
         std::cout<<"1\n";
+    else if(ans.empty())
+        std::cout<<"0\n";
     return ans;
 }
 void bool_func::set_optimized_func() {
