@@ -57,3 +57,11 @@ Input is implemented using C++ IO streams according to the following rules:
 - Calculating the min/max terms is trivial given the truth table.
 - We simply go through the table element by element, if it is set to true, we add it to the vector of minterms otherwise, we add it to the vector of maxterms.
 - Given the min/max terms, we simply translate the terms into characters and store them in the SoP/PoS.
+
+
+## Printing the minimized boolean expression
+- At this point, we have all the prime implicants PIs, essential prime implicants EPIs, and the covered/uncovered minterms.
+- By definition, the minimized function should include all the EPIs and, if needed, the prime implicants covering the remaining uncovered minterms.
+- Since we already store the EPIs, returning them is trivial.
+- Then, we iterate over the prime implicants to choose the ones covering the maximum number of the uncovered minterms.
+- Given all EPIs and the PIs covering the remaining minterms, we construct and print our minimized function. 
