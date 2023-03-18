@@ -68,7 +68,7 @@ Input is implemented using C++ IO streams according to the following rules:
 - Calculating the min/max terms is trivial given the truth table.
 - We simply go through the table element by element, if it is set to true, we add it to the vector of minterms otherwise, we add it to the vector of maxterms.
 - Given the min/max terms, we simply translate the terms into characters and store them in the SoP/PoS.
-## Getting the prime implicants using the canonical SoP representation of the function (set_prime_implicant())
+## Getting the prime implicants using the canonical SoP representation of the function
 - The function takes as input a set of minterms and the number of variables in the Boolean function.
 - Implicant struct has an integer 'imp' that represenets the implicant itself where the dashes are always replaced with ones. The other integer is named dash location which sets the dash locations in the implicant to 1 so that we know their location. The struct has a boolean 'is_combined' that is used in the middle of the process to determine whether this implicant is combined with another one or not. Finally, the struct has a list of all covered minterms by this implicant.
 - It initializes two vectors of implicants, pi_table and tmp_table, with size equal to the number of variables plus one.
@@ -79,8 +79,8 @@ Input is implemented using C++ IO streams according to the following rules:
 - After all possible combinations have been attempted, any implicants that were not marked as combined are added to the prime_implicants vector.
 - The exists hash table is then cleared, and pi_table is replaced with tmp_table. tmp_table is resized to have size equal to the number of variables.
 - The loop repeats until no more implicants can be combined.
-## Getting essential and non essential prime implicants (set_essentials_and_non_essentials())
--The code has four main steps:
+## Getting essential and non essential prime implicants
+- The code has four main steps:
 - (1) Iterate through each prime implicant in prime_implicants and add its covered minterms to coverage_chart and uncovered_minterms.
 - (2) Iterate through each entry in coverage_chart and check if there is only one prime implicant that covers the minterm. If so, add the corresponding prime implicant to essential_prime_implicants set.
 - (3) Iterate through each essential prime implicant in essential_prime_implicants set and remove its covered minterms from uncovered_minterms set.
