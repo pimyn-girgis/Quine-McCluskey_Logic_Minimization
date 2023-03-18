@@ -61,7 +61,7 @@ Input is implemented using C++ IO streams according to the following rules:
 
 ## Printing the minimized boolean expression
 - At this point, we have all the prime implicants PIs, essential prime implicants EPIs, and the covered/uncovered minterms.
-- By definition, the minimized function should include all the EPIs and, if needed, the prime implicants covering the remaining uncovered minterms.
+- By definition, the minimized function should include all the EPIs and, if there are uncovered minterms, the prime implicants covering the remaining uncovered minterms.
 - Since we already store the EPIs, returning them is trivial.
 - Then, we iterate over the prime implicants to choose the ones covering the maximum number of the uncovered minterms.
 - Given all EPIs and the PIs covering the remaining minterms, we construct and print our minimized function. 
