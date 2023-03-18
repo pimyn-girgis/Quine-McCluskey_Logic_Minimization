@@ -1,7 +1,7 @@
 # Quine-McCluskey_Logic_Minimization
 Implementing the Quine-McCluskey Logic Minimization Algorithm for CSCE 2301 taught by Dr. Mohamed Shalan Spring 2023 at AUC.
 
-#Build and Run
+## Build and Run
 Create the make files
 ```
 cmake -BQM
