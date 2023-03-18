@@ -22,6 +22,17 @@ Large input may be difficult to display on the terminal, thus, we advise you sav
 ```
 where in.txt is the input, and out.txt is the output.
 
+## generate and run test cases
+compile using gcc
+```
+gcc tc_gen.c -o tc_gen.out
+```
+run the generator
+```
+.\tc_gen.out n
+```
+where n is the number of variables
+
 ## Input:
 Input is implemented using C++ IO streams according to the following rules:
 - Since the input should be in the form of SoP, it was assumed that no AND operator will be used and thus the validation only accepts two operators + (for OR) and ' (for negation)
