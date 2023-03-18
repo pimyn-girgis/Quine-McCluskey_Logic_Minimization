@@ -1,6 +1,23 @@
 # Quine-McCluskey_Logic_Minimization
 Implementing the Quine-McCluskey Logic Minimization Algorithm for CSCE 2301 taught by Dr. Mohamed Shalan Spring 2023 at AUC.
 
+#Build and Run
+Create the make files
+```
+cmake -BQM
+```
+This will create a directory named QM
+
+Now build the project
+```
+cmake --build QM --target all
+```
+Now to run an instance of the program just type in
+```
+./QM/QM_Algorithm
+```
+Or open the directory and open the program directly.
+
 ## Input:
 Input is implemented using C++ IO streams according to the following rules:
 - Since the input should be in the form of SoP, it was assumed that no AND operator will be used and thus the validation only accepts two operators + (for OR) and ' (for negation)
