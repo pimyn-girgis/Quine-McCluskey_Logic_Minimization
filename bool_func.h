@@ -1,8 +1,9 @@
 #ifndef QM_ALGORITHM_BOOL_FUNC_H
 #define QM_ALGORITHM_BOOL_FUNC_H
 
-#include "util.h"
 #include <chrono>
+#include <unordered_set>
+#include "util.h"
 
 struct implicant {
     implicant(int i, int d, bool b);
@@ -38,8 +39,10 @@ class bool_func {
     std::vector<std::vector<implicant>> pi_table;
     std::vector<std::vector<implicant>> tmp_table;
     std::vector<implicant> prime_implicants;
+    std::vector<implicant> essential_prime_implicants;
+    std::vector<implicant> non_essential_prime_implicants;
+    std::unordered_map<int,std::unordered_set<int>> coverage_chart;
     std::unordered_map<std::pair<int,int>,int,pair_hash> exists;
-
 
     void parse_func(std::string &str);
     void set_var_count(const std::string& input); //Given a function as input, calculate the number of variables
@@ -61,6 +64,7 @@ class bool_func {
     const std::vector<int>& get_maxterms();
     const std::vector<char>& get_truth_table();
     const std::vector<implicant>& get_prime_implicants();
+    const std::vector<implicant>& get_optimized_func();
     bool is_minterm(int i);
     static bool is_combinable(implicant * x, implicant * y);
 
