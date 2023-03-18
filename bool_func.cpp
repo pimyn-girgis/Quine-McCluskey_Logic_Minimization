@@ -288,7 +288,7 @@ void bool_func::set_essentials_and_non_essentials() {
         if(u.second.size() == 1)
             essential_prime_implicants.emplace(prime_implicants[*u.second.begin()]) ;
     }
-    for(const auto& u : prime_implicants)
+    for(const auto& u : essential_prime_implicants)
         for(const auto& m : u.covered_minterms){
             uncovered_minterms.erase(m);
     }
