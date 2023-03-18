@@ -16,7 +16,11 @@ Now to run an instance of the program just type in
 ```
 ./QM/QM_Algorithm
 ```
-Or open the directory and open the program directly.
+Larget input may be harder to display on the terminal, thus, we advise you save the output to a file using the following command
+```
+./QM/QM_Algorithm < in.txt > out.txt
+```
+where in.txt is the input, and out.txt is the output.
 
 ## Input:
 Input is implemented using C++ IO streams according to the following rules:
