@@ -342,7 +342,7 @@ void bool_func::set_prime_implicants() {
 std::string bool_func::binary_to_string(int imp, int dash,bool b) const {
     char c = 'a' ; // add (+ var_count - 1) if u wanna invert the ouput again.
     std::string output;
-    for(int i(0);i<var_count;++i,--c) {
+    for(int i(0);i<var_count;++i,++c) { // add (--c) if u wanna invert the output again.
         if((dash&1))
             output = (!b ? "" : "-") + output;
         else if((imp&1))
