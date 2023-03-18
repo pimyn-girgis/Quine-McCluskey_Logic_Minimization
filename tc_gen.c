@@ -3,7 +3,7 @@
 #include <time.h>
 
 int main(int argc, char** argv) {
-    int n = min(atoi(argv[1]), 1);
+    int n = atoi(argv[1]);
 
     FILE *test_cases = fopen("QM/in.txt", "w");
     srand(time(0));
