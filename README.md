@@ -16,7 +16,7 @@ Now to run an instance of the program just type in
 ```
 ./QM/QM_Algorithm
 ```
-Larget input may be harder to display on the terminal, thus, we advise you save the output to a file using the following command
+Large input may be difficult to display on the terminal, thus, we advise you save the output to a file using the following command.
 ```
 ./QM/QM_Algorithm < in.txt > out.txt
 ```
@@ -29,7 +29,7 @@ Input is implemented using C++ IO streams according to the following rules:
 - Negation can be repeated multiple times
 - The OR operator cannot be followed by another operator.
 - An or operator at the end of the function will be dismissed.
-- any spaces in the function is removed i.e. "a b\tc" is converted to "abc"
+- any spaces in the function is removed i.e. "a bc" is converted to "abc"
 - Only allowed variable names are 'a' through 'j' (maximum 10 variables)
 - User is prompted the position and value of the character where an error is discovered.
 - To make the design easier, if a term in the input is always evaluated to false, it is omitted from the expression; e.g. aa' + ab will be translated to ab.
