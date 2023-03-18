@@ -23,7 +23,7 @@ int main(int argc, char** argv) {
                 fprintf(test_cases, " + ");
             }
         }
-        fprintf(test_cases, "\n");
+        fprintf(test_cases, "\n0\n");
     }
 
     return 0;
