@@ -9,6 +9,8 @@
 #include <set>
 #include <stack>
 #include <vector>
+#include <stdio.h>
+#include <ctype.h>
 
 class util {
    public:

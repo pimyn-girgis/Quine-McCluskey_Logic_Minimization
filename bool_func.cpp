@@ -9,6 +9,9 @@ bool_func::bool_func(std::string& str) : var_count(0) {
     set_min_max_terms();
     set_canonical_sop();
     set_canonical_pos();
+    set_prime_implicants();
+    set_essentials_and_non_essentials();
+    set_optimized_func();
 }
 implicant::implicant(int i, int d, bool b) {
     imp=i;
@@ -200,21 +203,97 @@ void bool_func::parse_func(std::string& str) {
 bool bool_func::is_combinable(implicant* x, implicant* y) {
     return x->dash_location == y->dash_location && util::is_power_of_two(x->imp^y->imp) == 1;
 }
-
-bool bool_func::test(implicant * j, implicant * k, int i) {
-    std::vector<int> v;
-    for (auto m : j->covered_minterms)
-        v.push_back(m);
-    for (auto m : k->covered_minterms)
-        v.push_back(m);
-    for(const auto& u : tmp_table[i])
-        if (u.covered_minterms==v){
-            return false;
-        }
-    return true;
-}
-
 const std::vector<implicant>& bool_func::get_prime_implicants() {
+    int i (1) ;
+    std::cout<<"---------------------------------------\n";
+    for(const auto& u : prime_implicants ) {
+        std::cout<<"Prime Implicant " << i++ << '\n';
+        std::cout<<binary_to_string(u.imp,u.dash_location,true)<<'\n';
+        std::cout<<"Covered Minterms :\n";
+        for(const auto& m : u.covered_minterms)
+            std::cout<<m<<" ";
+        std::cout<<"\n---------------------------------------\n";
+    }
+    return prime_implicants;
+}
+std::unordered_set<implicant,implicant_hash> bool_func::get_essentials(){
+    int i(1);
+    for(const auto& u : essential_prime_implicants ) {
+        std::cout<<"Essential Prime Implicant " << i++ << '\n';
+        std::cout<<binary_to_string(u.imp,u.dash_location,true)<<'\n';
+        std::cout<<"Covered Minterms :\n";
+        for(const auto& m : u.covered_minterms)
+            std::cout<<m<<" ";
+        std::cout<<"\n---------------------------------------\n";
+    }
+    std::cout<<"Uncovered Minterms :\n";
+    for(const auto& u : uncovered_minterms)
+        std::cout<<u<<" ";
+    std::cout<<"\n---------------------------------------\n";
+    return essential_prime_implicants;
+}
+const std::unordered_set<implicant,implicant_hash>& bool_func::get_optimized_func() {
+    int len = int(ans.size()) - 1;
+    std::cout<<"Final Optimized Function : \n";
+    for(auto it = ans.begin(); it != ans.end(); ++it,--len)
+        std::cout<<binary_to_string((*it).imp,(*it).dash_location,false) << (len? '+' : '\n' );
+    if(binary_to_string((ans.begin())->imp,(ans.begin()->dash_location),false)=="")
+        std::cout<<"1\n";
+    return ans;
+}
+void bool_func::set_optimized_func() {
+    std::unordered_set<int> temp_uncovered_minterms = uncovered_minterms;
+
+    for (const auto& u : essential_prime_implicants)
+        for (const auto& m : u.covered_minterms) {
+            temp_uncovered_minterms.erase(m);
+        }
+
+    implicant covers_max_uncovered (0,0,{});
+
+    int cnt ,cur_max(0);
+
+    ans = essential_prime_implicants;
+
+    while(!temp_uncovered_minterms.empty()) {
+        for (const auto& u : non_essential_prime_implicants) {
+            cnt = 0 ;
+            for (const auto& m : u.covered_minterms) {
+                if (temp_uncovered_minterms.find(m) != temp_uncovered_minterms.end())
+                    cnt++;
+            }
+            if (cnt >= cur_max) {
+                cur_max = cnt;
+                covers_max_uncovered = u;
+            }
+        }
+        for(const auto& c : covers_max_uncovered.covered_minterms) {
+            temp_uncovered_minterms.erase(c);
+        }
+        ans.emplace(covers_max_uncovered);
+        cur_max = 0 ; cnt = 0 ;
+    }
+}
+void bool_func::set_essentials_and_non_essentials() {
+    for (int i(0);i<prime_implicants.size();++i) {
+        for(int c : prime_implicants[i].covered_minterms) {
+            coverage_chart[c].emplace(i);
+            uncovered_minterms.emplace(c); // This is going to aid in get_optimized_func() instead of repeating code.
+        }
+    }
+    for (const auto& u : coverage_chart){
+        if(u.second.size() == 1)
+            essential_prime_implicants.emplace(prime_implicants[*u.second.begin()]) ;
+    }
+    for(const auto& u : prime_implicants)
+        for(const auto& m : u.covered_minterms){
+            uncovered_minterms.erase(m);
+    }
+    for(const auto& u : prime_implicants)
+        if(essential_prime_implicants.find(u)==essential_prime_implicants.end())
+            non_essential_prime_implicants.emplace(u);
+}
+void bool_func::set_prime_implicants() {
     auto start = std::chrono::high_resolution_clock::now();
     pi_table.resize(var_count + 1);
     tmp_table.resize(var_count + 1);
@@ -258,17 +337,19 @@ const std::vector<implicant>& bool_func::get_prime_implicants() {
     auto stop = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
     std::cout << "Time taken by function: " << duration.count() << " microseconds" << "\n";
-    get_optimized_func();
-    return prime_implicants;
 }
-const std::vector<implicant>& bool_func::get_optimized_func() {
-    for (int i(0);i<prime_implicants.size();++i) {
-        for(int c : prime_implicants[i].covered_minterms)
-            coverage_chart[c].emplace(i);
+std::string bool_func::binary_to_string(int imp, int dash,bool b) const {
+    char c = 'a' + var_count - 1;
+    std::string output;
+    for(int i(0);i<var_count;++i,--c) {
+        if((dash&1))
+            output = (!b ? "" : "-") + output;
+        else if((imp&1))
+            output = c + output;
+        else if(!(imp&1))
+            output = (char)toupper(c) + output;
+        dash = dash>>1;
+        imp = imp>>1;
     }
-    for (const auto& u : coverage_chart)
-        for(const auto& m : u.second) {
-            u.second.size() == 1 ? essential_prime_implicants.emplace_back(prime_implicants[m])
-                                 : non_essential_prime_implicants.emplace_back(prime_implicants[m]);
-        }
+    return output;
 }
