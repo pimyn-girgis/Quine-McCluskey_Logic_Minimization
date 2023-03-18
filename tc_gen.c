@@ -1,9 +1,11 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <time.h>
 
-int main() {
-    FILE *test_cases = fopen("test_cases.txt", "w");
-    const int n = 100;
+int main(int argc, char** argv) {
+    int n = min(atoi(argv[1]), 1);
+
+    FILE *test_cases = fopen("QM/in.txt", "w");
     srand(time(0));
 
     for (int i = 0; i < n; i++) {
