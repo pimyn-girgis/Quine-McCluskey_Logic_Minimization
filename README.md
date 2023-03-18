@@ -22,7 +22,7 @@ Large input may be difficult to display on the terminal, thus, we advise you sav
 ```
 where in.txt is the input, and out.txt is the output.
 
-## generate and run test cases
+## Generate and run test cases
 compile using gcc
 ```
 gcc tc_gen.c -o tc_gen.out
@@ -69,10 +69,14 @@ Input is implemented using C++ IO streams according to the following rules:
 - We simply go through the table element by element, if it is set to true, we add it to the vector of minterms otherwise, we add it to the vector of maxterms.
 - Given the min/max terms, we simply translate the terms into characters and store them in the SoP/PoS.
 
-
 ## Printing the minimized boolean expression
 - At this point, we have all the prime implicants PIs, essential prime implicants EPIs, and the covered/uncovered minterms.
 - By definition, the minimized function should include all the EPIs and, if there are uncovered minterms, the prime implicants covering the remaining uncovered minterms.
 - Since we already store the EPIs, returning them is trivial.
 - Then, we iterate over the prime implicants to choose the ones covering the maximum number of the uncovered minterms.
 - Given all EPIs and the PIs covering the remaining minterms, we construct and print our minimized function. 
+
+Project by:
+- Bemen Girgis 900213066
+- Ziad Hassan 900213728
+- Salma Khalil 900213357
